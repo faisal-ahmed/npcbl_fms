@@ -9,13 +9,13 @@ class Email extends BaseConfig
 
     //Todo: Change This with appropriate
     public string $fromEmail  = 'iqbal.hasani228@rooppurnpp.gov.bd';
-    public string $fromName   = 'NPCBL HRM System';
+    public string $fromName   = 'NPCBL FMS System';
     public string $recipients = '';
 
     /**
      * The "user agent"
      */
-    public string $userAgent = 'NPCBL HRM';
+    public string $userAgent = 'NPCBL FMS System';
 
     /**
      * The mail sending protocol: mail, sendmail, smtp
