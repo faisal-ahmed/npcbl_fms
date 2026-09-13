@@ -4,83 +4,75 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 use Config\Services;
-use CodeIgniter\HTTP\RequestInterface;
-use CodeIgniter\Email\Email;
+use Exception;
 
 class BaseModel extends Model
 {
-    protected RequestInterface $request;
-    protected Email $email;
+    protected \CodeIgniter\Email\Email $email;
+    protected \CodeIgniter\HTTP\IncomingRequest|\CodeIgniter\HTTP\CLIRequest $request;
 
     public function __construct()
     {
         parent::__construct();
-
         $this->request = Services::request();
         $this->email   = Services::email();
     }
 
     /**
-     * Debug utility for quick data inspection
+     * ✅ Enhanced Debug Utility
      */
-    public function debug(mixed $debugArray): void
+    public function debug(mixed $data, bool $die = false): void
     {
-        echo "<pre style='background: #222; color: #0f0; padding: 20px; border-radius: 5px;'>";
-        print_r($debugArray);
-        echo "</pre>";
+        echo '<pre style="background:#222; color:#00ff00; padding:15px; border-radius:5px; border:1px solid #444;">';
+        print_r($data);
+        echo '</pre>';
+        if ($die) die();
     }
 
     /**
-     * Helper to get trimmed POST data
+     * ✅ Streamlined Input Fetching
      */
-    public function postGet(string $attr, bool $filter = true): string
+    public function postGet(string $attr, bool $filter = true): ?string
     {
-        $val = $this->request->getPost($attr, $filter);
-        return is_string($val) ? trim($val) : '';
+        $value = $this->request->getVar($attr, $filter);
+        return is_string($value) ? trim($value) : $value;
     }
 
     /**
-     * Generates a random alphanumeric string
+     * ✅ Cryptographically Secure Random Password
+     * Compatible with PHP 7.0 through 8.2+
      */
-    public function randomPassword(int $length = 8): string
+    public function randomPassword(int $digit = 8): string
     {
-        $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        return substr(str_shuffle(str_repeat($chars, ceil($length / strlen($chars)))), 0, $length);
+        try {
+            // random_bytes generates raw binary, bin2hex converts to readable string
+            // We divide by 2 because hex conversion doubles the string length
+            return bin2hex(random_bytes($digit / 2));
+        } catch (Exception $e) {
+            // Fallback for rare cases where CSPRNG is unavailable
+            return substr(str_shuffle(str_repeat('0123456789abcdefghijklmnopqrstuvwxyz', 5)), 0, $digit);
+        }
     }
 
     /**
-     * Centralized Email Sender logic
+     * ✅ Robust Email Sender
      */
     public function sendEmail(string $to, string $subject, string $message): bool
     {
-        // Ensure email is configured to send HTML
-        $this->email->setMailType('html');
+        $this->email->clear();
 
-        $this->email->setFrom('no.reply@faisal-ahmed.com', 'HRM System Notification');
+        $this->email->setFrom('no.reply@faisal-ahmed.com', 'Automated Content-Searching Machine');
         $this->email->setTo($to);
         $this->email->setSubject($subject);
 
-        // Standardized Email Template
-        $body = "
-            <div style='font-family: Arial, sans-serif; line-height: 1.6;'>
-                {$message}
-                <br/><br/>
-                <hr style='border: 0; border-top: 1px solid #eee;' />
-                <p style='color: #777; font-size: 12px;'>
-                    Thanks,<br/>
-                    <strong>NPP HRM Team</strong>
-                </p>
-            </div>
-        ";
-
-        $this->email->setMessage($body);
+        $fullMessage = $message . "<br/><br/>Thanks,<br/><strong>ACM Team</strong>";
+        $this->email->setMessage($fullMessage);
 
         if ($this->email->send()) {
             return true;
         }
 
-        // Optional: Log errors if email fails
-        // log_message('error', $this->email->printDebugger(['headers']));
+        log_message('error', $this->email->printDebugger(['headers']));
         return false;
     }
 }

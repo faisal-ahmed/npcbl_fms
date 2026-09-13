@@ -239,7 +239,7 @@
   body.vertical-compact-menu .navbar .navbar-header {
     width: 140px; }
   body.vertical-compact-menu .content, body.vertical-compact-menu .footer, body.vertical-compact-menu .header-navbar {
-    margin-left: 140px; } }
+    /*margin-left: 140px;*/ } }
 
 @media (max-width: 991.98px) {
   body.vertical-compact-menu .navbar .navbar-header {

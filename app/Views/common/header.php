@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>NPCBL HRM</title>
+    <title>NPCBL Career</title>
 
     <link rel="apple-touch-icon" href="<?php echo base_url('app-assets/images/ico/apple-icon-120.png'); ?>">
     <link rel="shortcut icon" href="<?php echo base_url('images/ico/favicon.ico'); ?>">
@@ -48,4 +48,4 @@
     <!-- BEGIN VENDOR JS-->
 </head>
 <body class="vertical-layout vertical-compact-menu 2-columns menu-expanded fixed-navbar" data-open="click" data-menu="vertical-compact-menu" data-col="2-columns">
-<div class="content-wrapper">
+    <div class="content-wrapper">

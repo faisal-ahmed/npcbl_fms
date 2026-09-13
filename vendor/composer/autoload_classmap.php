@@ -6,6 +6,13 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'App\\Controllers\\Api' => $baseDir . '/app/Controllers/Api.php',
+    'App\\Controllers\\BaseController' => $baseDir . '/app/Controllers/BaseController.php',
+    'App\\Controllers\\Home' => $baseDir . '/app/Controllers/Home.php',
+    'App\\Controllers\\Ims' => $baseDir . '/app/Controllers/Ims.php',
+    'App\\Filters\\SessionFilter' => $baseDir . '/app/Filters/SessionFilter.php',
+    'App\\Models\\BaseModel' => $baseDir . '/app/Models/BaseModel.php',
+    'App\\Models\\UserModel' => $baseDir . '/app/Models/UserModel.php',
     'Attribute' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
     'CURLStringFile' => $vendorDir . '/symfony/polyfill-php81/Resources/stubs/CURLStringFile.php',
     'Clue\\React\\NDJson\\Decoder' => $vendorDir . '/clue/ndjson-react/src/Decoder.php',

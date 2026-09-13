@@ -235,14 +235,12 @@ ul.token-distribution-list li.completed-milestone::before{
 }
 
 ul.token-distribution-list li.performed-milestone::before{
-	background: #FF9149 !important;
+	background: #F6EE25 !important; /* FF9149 */
 }
 
-.errors ul {
-    margin-bottom: 0;
-}
-.errors li {
-    list-style: inside disc;
+.alert-yellow {
+    background-color: #fffd95 !important;
+    border-color: #dcd700 !important;
 }
 
 .np-vertical-center{
@@ -292,16 +290,6 @@ a.navbar-brand.flex-header h1, i.ft-menu{
     color: #F6EE25;
     text-decoration: none;
     background-color: rgba(0, 145, 160, 0.78);
-}
-
-.fas {
-    font-family: "Font Awesome 5 Free" !important;
-    font-weight: 900 !important;
-    display: inline-block;
-    font-style: normal;
-    font-variant: normal;
-    text-rendering: auto;
-    -webkit-font-smoothing: antialiased;
 }
 
 /* ============================
@@ -365,10 +353,6 @@ a.navbar-brand.flex-header h1, i.ft-menu{
     color: #F6EE25 !important;
     border: none !important;
     box-shadow: none !important;
-}
-
-.main-menu.menu-dark .navigation > li.open > a{
-    border-right: 4px solid #28D094;
 }
 
 /* REMOVE TEMPLATE NAVY OVERRIDES FOR ALL NESTED LEVELS */
@@ -455,6 +439,12 @@ a.navbar-brand.flex-header h1, i.ft-menu{
     }
     .vertical-compact-menu.menu-open .content, .vertical-compact-menu.menu-open .footer, .vertical-compact-menu.menu-open .header-navbar {
         margin-left: 130px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .col-xl-auto {
+        width: 12.5% !important;
     }
 }
 

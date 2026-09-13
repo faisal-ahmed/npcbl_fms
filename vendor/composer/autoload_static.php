@@ -107,6 +107,10 @@ class ComposerStaticInit2ae413b2a4d5a638d615f099808306f1
             'CodeIgniter\\' => 12,
             'Clue\\React\\NDJson\\' => 18,
         ),
+        'A' => 
+        array (
+            'App\\' => 4,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
@@ -307,6 +311,10 @@ class ComposerStaticInit2ae413b2a4d5a638d615f099808306f1
         array (
             0 => __DIR__ . '/..' . '/clue/ndjson-react/src',
         ),
+        'App\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/app',
+        ),
     );
 
     public static $prefixesPsr0 = array (
@@ -320,6 +328,13 @@ class ComposerStaticInit2ae413b2a4d5a638d615f099808306f1
     );
 
     public static $classMap = array (
+        'App\\Controllers\\Api' => __DIR__ . '/../..' . '/app/Controllers/Api.php',
+        'App\\Controllers\\BaseController' => __DIR__ . '/../..' . '/app/Controllers/BaseController.php',
+        'App\\Controllers\\Home' => __DIR__ . '/../..' . '/app/Controllers/Home.php',
+        'App\\Controllers\\Ims' => __DIR__ . '/../..' . '/app/Controllers/Ims.php',
+        'App\\Filters\\SessionFilter' => __DIR__ . '/../..' . '/app/Filters/SessionFilter.php',
+        'App\\Models\\BaseModel' => __DIR__ . '/../..' . '/app/Models/BaseModel.php',
+        'App\\Models\\UserModel' => __DIR__ . '/../..' . '/app/Models/UserModel.php',
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'CURLStringFile' => __DIR__ . '/..' . '/symfony/polyfill-php81/Resources/stubs/CURLStringFile.php',
         'Clue\\React\\NDJson\\Decoder' => __DIR__ . '/..' . '/clue/ndjson-react/src/Decoder.php',

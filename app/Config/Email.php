@@ -7,15 +7,14 @@ use CodeIgniter\Config\BaseConfig;
 class Email extends BaseConfig
 {
 
-    //Todo: Change This with appropriate
-    public string $fromEmail  = 'iqbal.hasani228@rooppurnpp.gov.bd';
-    public string $fromName   = 'NPCBL FMS System';
+    public string $fromEmail  = '';
+    public string $fromName   = '';
     public string $recipients = '';
 
     /**
      * The "user agent"
      */
-    public string $userAgent = 'NPCBL FMS System';
+    public string $userAgent = '';
 
     /**
      * The mail sending protocol: mail, sendmail, smtp
@@ -30,19 +29,17 @@ class Email extends BaseConfig
     /**
      * SMTP Server Hostname
      */
-    public string $SMTPHost = 'mail-project01.bcc.gov.bd';
+    public string $SMTPHost = '';
 
     /**
      * SMTP Username
      */
-    //Todo: Change this with appropriate
-    public string $SMTPUser = 'iqbal.hasani228@rooppurnpp.gov.bd';
+    public string $SMTPUser = '';
 
     /**
      * SMTP Password
      */
-    //Todo: Change this with appropriate
-    public string $SMTPPass = 'Procharon@2025';
+    public string $SMTPPass = '';
 
     /**
      * SMTP Port
