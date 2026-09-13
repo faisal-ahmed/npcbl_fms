@@ -16,8 +16,8 @@
                             <h1>
                                 <?php
                                     if (isset($loggedIn) && $loggedIn == 'true')
-                                        echo "NPCBL Job Management System (JMS) Portal";
-                                    else echo "Welcome to Job Management System (JMS) Portal"
+                                        echo "NPCBL Fitness Management System (FMS) Portal";
+                                    else echo "Welcome to Fitness Management System (FMS) Portal"
                                 ?>
                             </h1>
                         </a>
@@ -32,7 +32,7 @@
                             </span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
-                            <div class="dropdown-divider"></div><a class="dropdown-item" href="<?php echo base_url('applicants/logout'); ?>"><i class="ft-power"></i> Logout</a>
+                            <div class="dropdown-divider"></div><a class="dropdown-item" href="<?php echo base_url('employee/logout'); ?>"><i class="ft-power"></i> Logout</a>
                         </div>
                     </li>
                 </ul>

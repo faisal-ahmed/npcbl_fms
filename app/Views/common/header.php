@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>NPCBL Career</title>
+    <title>NPCBL FMS</title>
 
     <link rel="apple-touch-icon" href="<?php echo base_url('app-assets/images/ico/apple-icon-120.png'); ?>">
     <link rel="shortcut icon" href="<?php echo base_url('images/ico/favicon.ico'); ?>">

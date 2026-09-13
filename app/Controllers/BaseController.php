@@ -1,12 +1,16 @@
 <?php
 namespace App\Controllers;
 
+use App\Models\AclModel;
 use App\Models\UserModel;
 use CodeIgniter\Controller;
+use CodeIgniter\Database\BaseConnection;
 use CodeIgniter\HTTP\CLIRequest;
 use CodeIgniter\HTTP\IncomingRequest;
+use CodeIgniter\HTTP\RedirectResponse;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
+use Config\Database;
 use Config\Services;
 use Psr\Log\LoggerInterface;
 
@@ -25,8 +29,19 @@ abstract class BaseController extends Controller
      *
      * @var CLIRequest|IncomingRequest
      */
-    protected $session;
     protected $request;
+
+    /**
+     * Instance of the main Session object.
+     */
+    protected $session;
+
+    /**
+     * Database connection instance.
+     *
+     * @var BaseConnection
+     */
+    protected BaseConnection $db;
 
     /**
      * An array of helpers to be loaded automatically upon
@@ -36,12 +51,6 @@ abstract class BaseController extends Controller
      * @var list<string>
      */
     protected $helpers = ['mail'];
-
-    /**
-     * Be sure to declare properties for any property fetch you initialized.
-     * The creation of dynamic property is deprecated in PHP 8.2.
-     */
-    // protected $session;
 
     /**
      * @param RequestInterface $request
@@ -59,87 +68,101 @@ abstract class BaseController extends Controller
         $this->request = Services::request();
 
         // Determine environment and connect to the appropriate database
-        if (str_contains($_SERVER['SERVER_NAME'], 'localhost')) {
-            $this->db = \Config\Database::connect('default');
-        } else {
-            $this->db = \Config\Database::connect('live');
-        }
+        $group = (ENVIRONMENT === 'development') ? 'default' : 'live';
+        $this->db = Database::connect($group);
     }
 
     // ✅ Session-based login status
     protected function isLoggedIn(): bool
     {
-        $session = service('session');
-        $expiry = $session->get('session_expiry');
+        $expiry = $this->session->get('session_expiry');
         $now = time();
 
-        return $session->get('user_id') && $expiry && $now <= $expiry;
+        return (bool) ($this->session->get('user_id') && $expiry && $now <= $expiry);
     }
 
-    protected function redirectLoggedInUser(): ?\CodeIgniter\HTTP\RedirectResponse
+    protected function redirectLoggedInUser(): ?RedirectResponse
     {
         if ($this->isLoggedIn()) {
-            return redirect()->to(site_url('applicants/home'));
+            return redirect()->to(site_url('Home'));
         }
         return null;
     }
 
-    protected function redirectGeneralUser(): ?\CodeIgniter\HTTP\RedirectResponse
+    /**
+     * Authentication & Authorization Combined Check
+     * Best called at the start of restricted controller methods.
+     */
+    protected function restrictAccess(): ?RedirectResponse
     {
-        $session = service('session');
-        $expiry = $session->get('session_expiry') ?? false;
-        $now = time();
+        if (!$this->isLoggedIn()) {
+            $this->clearSession();
+            return redirect()->to(base_url('employee/login'));
+        }
 
-        if (!$session->get('user_id') || !$expiry || $now > $expiry) {
-            $this->clearSession(); // clear session if invalid or expired
-            return redirect()->to(site_url('applicants/login'));
+        if (!$this->hasPermission()) {
+            return redirect()->to(base_url('home'))->with('error', 'You do not have permission to view this resource.');
         }
 
         return null;
+    }
+
+    /**
+     * Internal logic to check ACL
+     */
+    private function hasPermission(): bool
+    {
+        $uri = service('uri');
+
+        $roleId     = (int) $this->getUserRole();
+        $controller = $uri->getSegment(1);
+        $method     = $uri->getSegment(2) ?: 'index';
+
+        $aclModel = new AclModel();
+        return $aclModel->checkAccess($roleId, $controller, $method);
     }
 
     protected function clearSession(): void
     {
-        if (session()->get('user_id')) {
-            session()->destroy();
+        if ($this->session->get('user_id')) {
+            $this->session->destroy();
         }
     }
 
     protected function getFullSession(): array
     {
-        $session = service('session');
-
         return [
-            'user_id'        => $session->get('user_id'),
-            'name_en'        => $session->get('np_job_person_name'),
-            'session_id'     => $session->get('session_id'),
-            'session_expiry' => $session->get('session_expiry'),
-            'status'         => $session->get('status')
+            'user_id'        => $this->session->get('user_id'),
+            'name_en'        => $this->session->get('np_job_person_name'),
+            'session_id'     => $this->session->get('session_id'),
+            'session_expiry' => $this->session->get('session_expiry'),
+            'status'         => $this->session->get('status')
         ];
+    }
+
+    protected function getUserRole(): mixed
+    {
+        return $this->session->get('role_id');
     }
 
     protected function getSessionAttr(string $attr): mixed
     {
-        $session = service('session');
-        return $session->has($attr) ? $session->get($attr) : false;
+        return $this->session->get($attr) ?? false;
     }
 
     protected function getSessionID(): mixed
     {
-        $session = service('session');
-        return $session->has('session_id') ? $session->get('session_id') : false;
+        return $this->session->get('session_id') ?? false;
     }
 
     protected function setSessionAttr(string $attr, mixed $value): void
     {
-        $session = service('session');
-        $session->set($attr, $value);
+        $this->session->set($attr, $value);
     }
 
     protected function unsetSessionAttr(string $attr): void
     {
-        $session = service('session');
-        $session->remove($attr);
+        $this->session->remove($attr);
     }
 
     protected function getUserId(): mixed
@@ -158,14 +181,17 @@ abstract class BaseController extends Controller
     // ✅ View Loader
     protected function viewLoad(string $view = null, array $data = []): string
     {
-        $userModel = new UserModel();
-        $data['loggedIn']       = $this->isLoggedIn() ? 'true' : 'false';
-        $data['session_data']   = $this->getFullSession();
-        if ($data['loggedIn'] == 'true') {
+        $isLoggedIn = $this->isLoggedIn();
+
+        $data['loggedIn']     = $isLoggedIn ? 'true' : 'false';
+        $data['session_data'] = $this->getFullSession();
+
+        if ($isLoggedIn) {
+            $userModel = new UserModel();
             $data['user_data'] = $userModel->getUserData($this->getUserId());
         }
 
-        $output = view('common/header', $data);
+        $output  = view('common/header', $data);
         $output .= view('common/nav_top_banner', $data);
         if (!is_null($view)) {
             $output .= view($view, $data);
